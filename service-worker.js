@@ -153,13 +153,11 @@ function extractHTML() {
 }
 
 function sendStatusToPopup(text, variant) {
-  try {
-    chrome.runtime.sendMessage({
-      type: 'status',
-      text: text,
-      variant: variant
-    });
-  } catch (err) {
-    console.log('Could not send status to popup:', text);
-  }
+  chrome.runtime.sendMessage({
+    type: 'status',
+    text: text,
+    variant: variant
+  }).catch(() => {
+    // Popup is closed — expected after ChatGPT tab opens
+  });
 }
