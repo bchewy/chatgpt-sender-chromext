@@ -95,28 +95,22 @@ async function injectMessage() {
 
     const editor = await pollForEditor();
     
-    if (!editor) {
-      console.error('[ChatGPT Injector] Failed to find editor element');
-      chrome.action.setBadgeText({ text: '!' });
-      chrome.action.setBadgeBackgroundColor({ color: '#e74c3c' });
-      return;
-    }
+     if (!editor) {
+       console.error('[ChatGPT Injector] Failed to find editor element');
+       return;
+     }
 
     const success = insertTextIntoEditor(editor, messageText);
 
-    if (success) {
-      await chrome.storage.session.remove('pendingMessage');
-      console.log('[ChatGPT Injector] Injection complete, cleaned up session storage');
-    } else {
-      console.error('[ChatGPT Injector] Failed to insert text');
-      chrome.action.setBadgeText({ text: '!' });
-      chrome.action.setBadgeBackgroundColor({ color: '#e74c3c' });
-    }
-  } catch (error) {
-    console.error('[ChatGPT Injector] Error in main injection logic:', error);
-    chrome.action.setBadgeText({ text: '!' });
-    chrome.action.setBadgeBackgroundColor({ color: '#e74c3c' });
-  }
+     if (success) {
+       await chrome.storage.session.remove('pendingMessage');
+       console.log('[ChatGPT Injector] Injection complete, cleaned up session storage');
+     } else {
+       console.error('[ChatGPT Injector] Failed to insert text');
+     }
+   } catch (error) {
+     console.error('[ChatGPT Injector] Error in main injection logic:', error);
+   }
 }
 
 injectMessage();

@@ -2,9 +2,12 @@ const MAX_CONTENT_LENGTH = 100000;
 const PRIVILEGED_SCHEMES = ['chrome:', 'about:', 'edge:', 'chrome-extension:', 'chrome-devtools:', 'view-source:'];
 
 let isProcessing = false;
+// Ensure session storage is accessible from content scripts on every startup
+try { chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' }); } catch (_) {}
 
 chrome.runtime.onInstalled.addListener(() => {
   console.log('ChatGPT Page Sender extension installed');
+  chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' });
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
