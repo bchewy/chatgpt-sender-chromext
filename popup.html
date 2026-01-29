@@ -2,11 +2,72 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="popup.css">
   <title>ChatGPT Page Sender</title>
 </head>
 <body>
-  <h1>ChatGPT Page Sender</h1>
-  <p>Send this page to ChatGPT</p>
+  <div class="popup">
+    <header class="header">
+      <div class="header-title">
+        <svg class="header-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M9 1L11.5 6.5L17 9L11.5 11.5L9 17L6.5 11.5L1 9L6.5 6.5L9 1Z" fill="currentColor"/>
+        </svg>
+        <h1 class="title">Page Sender</h1>
+      </div>
+      <span class="badge">ChatGPT</span>
+    </header>
+
+    <div class="field">
+      <label class="label" for="preset-select">Preset</label>
+      <div class="select-wrap">
+        <select id="preset-select" class="select">
+          <option value="">Custom prompt</option>
+          <option value="1">Summarize this page</option>
+          <option value="2">Extract key points</option>
+          <option value="3">Explain like I'm 5</option>
+          <option value="4">List pros and cons</option>
+          <option value="5">Main arguments</option>
+          <option value="6">Translate to [language]</option>
+        </select>
+        <svg class="select-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="label" for="prompt-textarea">Prompt</label>
+      <textarea id="prompt-textarea" class="textarea" rows="4" placeholder="Enter your prompt here..." spellcheck="false"></textarea>
+    </div>
+
+    <div class="field">
+      <label class="label">Content Mode</label>
+      <div class="segment-group">
+        <input type="radio" name="content-mode" value="text" id="mode-text" class="segment-input" checked>
+        <label for="mode-text" class="segment-label">
+          <span>Visible Text</span>
+          <span class="rec-badge">rec</span>
+        </label>
+        <input type="radio" name="content-mode" value="html" id="mode-html" class="segment-input">
+        <label for="mode-html" class="segment-label">
+          <span>Full HTML Source</span>
+        </label>
+      </div>
+    </div>
+
+    <button id="send-btn" class="btn-send" type="button">
+      <span class="btn-text">Send to ChatGPT</span>
+      <svg class="btn-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M2 7H12M8 3L12 7L8 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <div id="status" class="status">
+      <span class="status-dot"></span>
+      <span id="status-text" class="status-text">Ready</span>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
 </body>
 </html>
