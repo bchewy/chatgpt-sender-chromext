@@ -312,6 +312,7 @@ body {
   font-weight: 500;
   color: var(--text-secondary);
   min-height: 34px;
+  transition: opacity 0.2s ease;
 }
 
 .status-dot {
@@ -325,6 +326,7 @@ body {
 
 .status-text {
   flex: 1;
+  transition: opacity 0.2s ease;
 }
 
 /* Status Variants */
