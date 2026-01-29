@@ -97,6 +97,8 @@ async function injectMessage() {
     
     if (!editor) {
       console.error('[ChatGPT Injector] Failed to find editor element');
+      chrome.action.setBadgeText({ text: '!' });
+      chrome.action.setBadgeBackgroundColor({ color: '#e74c3c' });
       return;
     }
 
@@ -107,9 +109,13 @@ async function injectMessage() {
       console.log('[ChatGPT Injector] Injection complete, cleaned up session storage');
     } else {
       console.error('[ChatGPT Injector] Failed to insert text');
+      chrome.action.setBadgeText({ text: '!' });
+      chrome.action.setBadgeBackgroundColor({ color: '#e74c3c' });
     }
   } catch (error) {
     console.error('[ChatGPT Injector] Error in main injection logic:', error);
+    chrome.action.setBadgeText({ text: '!' });
+    chrome.action.setBadgeBackgroundColor({ color: '#e74c3c' });
   }
 }
 

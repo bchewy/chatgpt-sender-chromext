@@ -1,6 +1,8 @@
 const MAX_CONTENT_LENGTH = 100000;
 const PRIVILEGED_SCHEMES = ['chrome:', 'about:', 'edge:', 'chrome-extension:', 'chrome-devtools:', 'view-source:'];
 
+let isProcessing = false;
+
 chrome.runtime.onInstalled.addListener(() => {
   console.log('ChatGPT Page Sender extension installed');
 });
@@ -13,6 +15,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 async function handleSendToChatGPT(prompt, mode) {
+  if (isProcessing) {
+    console.log('Already processing a request, ignoring duplicate');
+    return;
+  }
+  
+  isProcessing = true;
   try {
     const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
@@ -48,10 +56,16 @@ async function handleSendToChatGPT(prompt, mode) {
       return;
     }
 
+    if (!content || content.trim().length === 0) {
+      sendStatusToPopup('Page appears to have no content.', 'error');
+      return;
+    }
+
     const originalLength = content.length;
     if (originalLength > MAX_CONTENT_LENGTH) {
       content = content.substring(0, MAX_CONTENT_LENGTH);
       content += `\n\n[Content truncated at 100,000 characters. Original length: ${originalLength} characters.]`;
+      sendStatusToPopup(`Content truncated from ${originalLength.toLocaleString()} to 100,000 characters.`, 'info');
     }
 
     let formattedMessage;
@@ -117,6 +131,8 @@ async function handleSendToChatGPT(prompt, mode) {
     try {
       chrome.alarms.clear('keepAlive');
     } catch (_) {}
+  } finally {
+    isProcessing = false;
   }
 }
 

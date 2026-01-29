@@ -12,10 +12,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const presetSelect = document.getElementById('preset-select');
   const promptTextarea = document.getElementById('prompt-textarea');
   const sendBtn = document.getElementById('send-btn');
+  const btnText = document.querySelector('.btn-text');
   const statusEl = document.getElementById('status');
   const statusText = document.getElementById('status-text');
   const modeText = document.getElementById('mode-text');
   const modeHtml = document.getElementById('mode-html');
+
+  // Clear any error badge when popup opens
+  try {
+    chrome.action.setBadgeText({ text: '' });
+  } catch (_) {}
+
+  // Set initial status
+  setStatus('Ready', 'info');
 
   presetSelect.addEventListener('change', () => {
     const idx = parseInt(presetSelect.value, 10);
@@ -26,9 +35,15 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   sendBtn.addEventListener('click', () => {
+    // Disable button immediately to prevent double-clicks
+    sendBtn.disabled = true;
+    btnText.textContent = 'Sending...';
+
     const prompt = promptTextarea.value.trim();
     if (!prompt) {
       setStatus('Please enter a prompt', 'error');
+      sendBtn.disabled = false;
+      btnText.textContent = 'Send to ChatGPT';
       return;
     }
 
@@ -36,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try { chrome.storage.local.set({ lastPrompt: prompt, lastMode: mode }); } catch (_) {}
 
-    sendBtn.disabled = true;
     setStatus('Extracting content\u2026', 'loading');
 
     try {
@@ -48,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (_) {
       setStatus('Extension context required', 'error');
       sendBtn.disabled = false;
+      btnText.textContent = 'Send to ChatGPT';
     }
   });
 
@@ -57,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setStatus(message.text, message.variant || 'info');
         if (message.variant === 'error' || message.variant === 'success') {
           sendBtn.disabled = false;
+          btnText.textContent = 'Send to ChatGPT';
         }
       }
     });
