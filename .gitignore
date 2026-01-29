@@ -1,0 +1,9 @@
+# Test infrastructure (not part of extension)
+node_modules/
+package.json
+package-lock.json
+test-*.js
+manual-test.md
+
+# Development files
+.DS_Store

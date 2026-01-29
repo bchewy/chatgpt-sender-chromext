@@ -67,9 +67,56 @@ async function handleSendToChatGPT(prompt, mode) {
     
     console.log('Content extracted and stored. Length:', formattedMessage.length);
 
+    chrome.alarms.create('keepAlive', { delayInMinutes: 0.5 });
+
+    const chatGPTTab = await chrome.tabs.create({
+      url: 'https://chatgpt.com/',
+      active: true
+    });
+
+    sendStatusToPopup('Waiting for ChatGPT to load…', 'loading');
+
+    const onChatGPTLoaded = async (tabId, changeInfo, tab) => {
+      if (tabId !== chatGPTTab.id) return;
+      if (changeInfo.status !== 'complete') return;
+
+      const url = tab.url || '';
+      const isChatGPTUrl = url.includes('chatgpt.com') || url.includes('chat.openai.com');
+      
+      if (!isChatGPTUrl) {
+        console.log('ChatGPT tab redirected to:', url);
+        return;
+      }
+
+      console.log('ChatGPT loaded, injecting content...');
+      sendStatusToPopup('Injecting content…', 'loading');
+
+      chrome.tabs.onUpdated.removeListener(onChatGPTLoaded);
+      chrome.alarms.clear('keepAlive');
+
+      try {
+        await chrome.scripting.executeScript({
+          target: { tabId: chatGPTTab.id },
+          files: ['chatgpt-injector.js']
+        });
+
+        sendStatusToPopup('Content sent to ChatGPT!', 'success');
+        console.log('Injection complete');
+      } catch (injectErr) {
+        console.error('Injection error:', injectErr);
+        sendStatusToPopup('Failed to inject content: ' + injectErr.message, 'error');
+      }
+    };
+
+    chrome.tabs.onUpdated.addListener(onChatGPTLoaded);
+
   } catch (err) {
     console.error('Error in handleSendToChatGPT:', err);
     sendStatusToPopup('Unexpected error: ' + err.message, 'error');
+    
+    try {
+      chrome.alarms.clear('keepAlive');
+    } catch (_) {}
   }
 }
 

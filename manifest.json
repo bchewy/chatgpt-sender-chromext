@@ -3,7 +3,7 @@
   "name": "ChatGPT Page Sender",
   "version": "1.0.0",
   "description": "Send any web page's content to ChatGPT with a custom prompt",
-  "permissions": ["activeTab", "scripting", "tabs", "storage"],
+  "permissions": ["activeTab", "scripting", "tabs", "storage", "alarms"],
   "host_permissions": ["https://chatgpt.com/*", "https://chat.openai.com/*"],
   "background": { "service_worker": "service-worker.js", "type": "module" },
   "action": { "default_title": "Send to ChatGPT", "default_popup": "popup.html" },
